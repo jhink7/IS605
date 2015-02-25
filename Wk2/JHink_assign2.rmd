@@ -1,0 +1,37 @@
+---
+title: "JHink_assign2.rmd"
+author: "Justin Hink"
+date: "Tuesday, February 03, 2015"
+output: html_document
+---
+
+Problem Set 1
+
+1) Proove A^T^A != AA^T^
+
+Sinc in general A^T^ is not guaranteed to be equal to A, let B = A^T^
+
+Rewrite:
+
+BA != AB
+
+This agrees with a fundamental property of matrices.  IE - their multiplication is not generally commutative. The proof of this theorem is widely available.
+
+The following is a quick proof via counterexample.  We aim to falsify that A^T^A = AA^T^
+
+```{r}
+A <- matrix(seq(from=1,to=6), nrow=2, byrow=T)
+r1 = A%*ˆ—%t(A)
+r2 = t(A)%*%A
+r1
+r2
+```
+
+r2 != r1
+
+
+
+2) A special case in which A^T^A = AA^T^ is when A is symmetrical.  In other words A^T^ = A
+
+Problem set 2
+

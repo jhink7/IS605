@@ -1,0 +1,92 @@
+---
+title: "JHink_assign2.rmd"
+author: "Justin Hink"
+date: "Tuesday, February 03, 2015"
+output: pdf_document
+---
+
+Problem Set 1
+
+1) Proove A^T^A != AA^T^
+
+Sinc in general A^T^ is not guaranteed to be equal to A, let B = A^T^
+
+Rewrite:
+
+BA != AB
+
+This agrees with a fundamental property of matrices.  IE - their multiplication is not generally commutative. The proof of this theorem is widely available.
+
+The following is a quick proof via counterexample.  We aim to falsify that A^T^A = AA^T^
+
+```{r}
+A <- matrix(seq(from=1,to=6), nrow=2, byrow=T)
+
+```
+
+A^T^A != AA^T^
+
+
+2) A special case in which A^T^A = AA^T^ is when A is symmetrical.  In other words A^T^ = A
+
+Problem set 2
+
+```{r}
+GetLU <- function(A){
+  
+  n = ncol(A)
+  
+  L = matrix(data=0, nrow=n, ncol=n)
+  U = matrix(data=0, nrow=n, ncol=n)
+  
+  for(j in 1:n){
+    L[j,j] = 1.0
+    
+    for(i in 1:j)
+    {
+      s1 = 0
+      for(k in 1:i)
+      {
+        s1 = s1 + U[k,j] * L[i,k]
+      }
+      U[i,j] = A[i,j] - s1
+    }
+    
+    for(i in j:n)
+    {
+      s2 = 0
+      for(k in 1:j)
+      {
+        s2 = s2 +U[k,j] * L[i,k]
+      }
+      
+      L[i,j] = (A[i,j] - s2) / U[j,j]
+    }
+    
+    L[j,j] = 1.0
+  }
+
+  return <- list(L = L, U = U)
+}
+
+
+
+A <- c(1, 2, 1, 3, 4, 1, 5, 7, 0)
+dim(A) <- c(3, 3)
+
+result = GetLU(A)
+
+L = result$L
+U = result$U
+
+L
+U
+
+L%*%U
+
+```
+
+Note that L * U is equivalent to the input matrix A
+
+A = LU
+

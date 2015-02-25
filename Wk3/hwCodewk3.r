@@ -1,0 +1,104 @@
+getRank <- function(A){
+  # Step 1: obrain reduced row echelon form of matrix
+  
+  n = nrow(A)
+  m = ncol(A)
+  x.pos = 1
+  y.pos = 1
+  
+  # Tolerance for the purposes of this assignment is set here.
+  tol= 1e-20 
+  
+  while((x.pos <= m) & (y.pos <= n))
+  {
+    col = A[,x.pos]
+    col[1:n < y.pos] = 0
+    
+    # find max pivot 
+    which = which.max(abs(col))
+    pivot = col[which]
+    
+    # check for 0 pivot as defined by our tolerance
+    if (abs(pivot) < tol) 
+    { 
+      x.pos = x.pos+1 
+    } 
+    else
+    {
+      if (which > y.pos) 
+      { 
+        # swap rows
+        A[c(y.pos,which),]=A[c(which,y.pos),] 
+      } 
+        
+      # pivot here
+      A[y.pos,] = A[y.pos,]/pivot 
+      row = A[y.pos,]
+      A = A - outer(A[,x.pos],row) 
+      A[y.pos,] = row
+      
+      y.pos = y.pos + 1
+      x.pos = x.pos + 1
+      
+    }
+  }
+  
+  for (i in 1:n)
+    if (max(abs(A[i,1:m])) <= tol)
+    {
+      # move 0 rows to bottom
+      A[c(i,n),] = A[c(n,i),] 
+    }
+  
+  round(A, round(abs(log(tol,10))))
+  
+  # Step 2: Get non zero pivots
+  
+  nonZeroPivs = 0;
+  for(i in 1:n)
+  {
+    if(A[i,i] > tol)
+    {
+      nonZeroPivs = nonZeroPivs + 1;
+    }
+  }
+  
+  return = nonZeroPivs
+}
+
+# Q1
+A = c(1, -1, 0, 5, 2, 0, 1, 4, 3, 1, -2, -2, 4, 3, 1, -2)
+dim(A) = c(4, 4)
+
+rank = getRank(A)
+
+# check work
+library(Matrix)
+
+checkRank = rankMatrix(A)
+
+rank == checkRank # True
+
+# Q2
+
+#For a m x n matrix where m > n, the maximum rank is n.
+# Generally speaking, rank(A) <= min(m,n)
+# Since we know that n < m, that reduces to, rank(A) <= n
+
+#The minimum rank is 1 (assuming a non zero matrix).
+
+#Rank(A) is the dimension of the image of A, i.e. the vector space consisting of Av for every vector V. 
+#If even one entry of A is nonzero, then there is a vector vsuch that Av is nonzero, and therefore the dimension of the image of A is not zero.
+
+# Q3
+A = c(1, 3, 2, 2, 6, 4, 1, 3, 2)
+dim(A) = c(3, 3)
+
+rank = getRank(A)
+
+# check work
+checkRank = rankMatrix(A)
+
+rank == checkRank # True
+
+

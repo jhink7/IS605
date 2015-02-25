@@ -1,0 +1,101 @@
+---
+title: "JHink_assignment4.rmd"
+author: "Justin Hink"
+date: "Saturday, February 21, 2015"
+output: html_document
+---
+
+##Problem Set 1
+
+```{r}
+# Setup the matrix
+A = c(1,-1,2,0,3,4)
+dim(A) <- c(2,3)  
+
+# calculate X and Y as defined in the assignment spec
+
+X = A %*% t(A)
+Y = t(A) %*% A
+
+# calculate eigen vectors
+eigVecX = eigen(X)$vectors
+eigVecX
+eigVecY = eigen(Y)$vectors
+eigVecY
+
+# calculate eigen values
+eigenValX = eigen(X)$values
+eigenValY = eigen(Y)$values
+
+svdA = svd(A)
+
+# calculate singular values, left and right singular vectors
+singValues = svdA$d
+singValues
+leftSingVectors = svdA$u
+leftSingVectors
+rightSingVectors = svdA$v
+rightSingVectors
+
+# From looking at the resulting calculations, we can see that eigVecX and leftSingVectors are equivalent 
+# (proportional by a constant of either 1 or -1)
+
+# From looking at the resulting calculations, we can see that eigVecY and rightSingVectors are equivalent 
+# (proportional by a constant of either 1 or -1)
+
+# the eigenValX and eigenValY are equivalent (26.6, 4.39).  Note that the 3rd eigen value for Y is very close
+# to 0 and will be considered as such
+trimmedEigenValY = head(eigenValY,2)
+check <- all.equal(eigenValX, trimmedEigenValY, 0.00001)
+check
+
+# compare the square of the singular values of A to our eigen values of X and Y 
+singValuesSquared = singValues^2
+
+check <- all.equal(eigenValX, singValuesSquared, 0.00001)
+check
+check <- all.equal(trimmedEigenValY, singValuesSquared, 0.00001)
+check
+```
+
+##Problem Set 2
+
+```{r}
+# function gets determinant of minor matrix
+minor <- function(A, i, j) { det( A[-i,-j] ) }
+
+# function gets cofactor of A based on indices i and j
+cofactor <- function(A, i, j) { (-1)^(i+j) * minor(A,i,j) }
+
+myinverse <- function(A)
+{
+  n <- nrow(A)
+  C <- matrix(NA, n, n)
+  
+  # populate our cofactor matrix
+  # note our "C" here is the transpose of the cofactor matrix
+  # done to prevent another call to the t() function at the end
+  for( i in 1:n )
+    for( j in 1:n )
+    {
+      C[j,i] <- cofactor(A, i, j)
+    }
+  
+  B <- (C) / det(A) 
+  
+  return(B)
+}
+
+A = c(4,2,5,2,2,2,1,3,4)
+dim(A) <- c(3,3)
+
+B = myinverse(A)
+I = A %*% B
+
+B2 = solve(A)
+
+#check work
+all.equal(B, B2, 0.00001)
+```
+
+

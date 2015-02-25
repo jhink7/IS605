@@ -1,0 +1,98 @@
+---
+title: "JHink_Assignment5"
+author: "Justin Hink"
+date: "Tuesday, February 24, 2015"
+output: html_document
+---
+
+##Problem Set 1
+
+```{r}
+
+# set up our data as per assignment spec
+A = c(1,1,1,1,0,1,3,4)
+dim(A) <- c(4,2)
+
+b = c(0,8,8,19)
+dim(b) <- c(4,1)
+
+p = c(1,5,13,17)
+dim(p) <- c(4,1)
+
+ata = t(A) %*% A
+
+atb = t(A) %*% b
+
+# solve modified equation (A^t)Ax = (A^t)b
+x1 = solve(ata,atb)
+x1
+
+# compute the error vector
+e1 = b - A %*% x1
+
+# now using p instead of b
+atp = t(A) %*% p
+
+# solve modified equation (A^t)Ax = (A^t)p
+x2 = solve(ata,atp)
+x2
+
+# compute the error vector (should be 0)
+e2 = p - A %*% x2 
+e2
+
+# show that b - p = [-1; 3;-5; 2]
+e = b - p
+e
+
+# show orthagonality, ie dot product = 0
+te2 = t(e2)
+isOrth = (te2 %*% p == 0) & (te2 %*% A[,1] == 0) & (te2 %*% A[,2] == 0)
+isOrth
+```
+
+##Problem Set 2
+
+```{r}
+# read data in
+rawdata = read.table("auto-mpg.data")
+
+#rename columns if we need them later
+colnames(rawdata) <- c("disp", "hp", "weight", "acc", "mpg")
+
+A = subset(rawdata, select = c(disp, hp, weight, acc))
+b = subset(rawdata, select = c(mpg))
+
+# add intercept column
+A$I  = 1
+
+A = data.matrix(A)
+b = data.matrix(b)
+
+ata = t(A) %*% A
+atb = t(A) %*% b
+
+x = solve(ata, atb)
+x
+# the best fit line is: mpg = -0.006 * disp - 0.043 * hp - 0.005*weight - 0.02 * acc + 45.25
+
+e = b - A %*% x
+
+# calculate out the equation manually 
+rawdata$predMPG = rawdata$disp * x[1] + rawdata$hp *x[2] + rawdata$weight *x[3]+ rawdata$acc * x[4] + x[5]
+
+# manually calculate residuals
+rawdata$res = rawdata$mpg - rawdata$predMPG 
+
+# residuals as per matrix calc above
+rawdata$res2 <- e
+
+# ensure the 2 methods of calculating residuals are equivalent 
+rawdata$resequal <- rawdata$res2 == rawdata$res
+rawdata
+
+#checking with R's built in functions shows we are correct
+fit <- with(rawdata, lm(mpg~disp+hp+weight+acc))
+summary(fit)
+
+```
