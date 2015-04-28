@@ -1,13 +1,3 @@
----
-title: "JHink_Assignment9"
-author: "Justin Hink"
-date: "Friday, March 20, 2015"
-output: html_document
----
-
-##Problem Set 1
-
-```{r, warning=FALSE}
 library(ggplot2)
 
 # First sampling function
@@ -15,7 +5,7 @@ sampleFn1 <- function(y)
 {
   if(y >= 0 && y <=2)
   {
-    # F(x) = x^2/2 - x + 1, x E [0, 1)
+    # F(x) = x^2/2 - x + 1, x E (0, 1)
     #      = 2x-x^2/2-1, x E [1, 2)
     return <- ifelse(y < 0.5,sqrt(2*y),2-sqrt(2*(1-y)))
   }
@@ -26,15 +16,15 @@ sampleFn2 <- function(y)
 {
   if(y >= 0 && y <=2)
   {
-    # F(x) = x^2/2 - x + 1, x E [0, 1)
+    # F(x) = x^2/2 - x + 1, x E (0, 1)
     #      = -x^2/2+x-3/2, x E [1, 2)
     return <- ifelse(y < 0.5,1+sqrt(2*y +3),1-sqrt(2)*sqrt(-y-1))
   }
 }
 
 
-sample1 <- sapply(runif(1000),sampleFn1)
-sample2 <- sapply(runif(1000),sampleFn2)
+sample1 <- sapply(runif(10000),sampleFn1)
+sample2 <- sapply(runif(10000),sampleFn2)
 
 
 data <- data.frame(f1 = sample1, f2 = sample2)
@@ -87,8 +77,3 @@ clmData <- verifyCLM(20, sampleFn2, 1000)
 
 p4 <- ggplot(clmData, aes(x=m1)) + geom_histogram(binwidth=.05)
 p4
-
-```
-
-Both functions have means that seem to be normally distributed.  This should imply emperically that the central limit theorem holds in these scenarios.  
-
